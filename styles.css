@@ -1,0 +1,25 @@
+html{
+    font-family: 'Montserrat', sans-serif;
+}
+
+.puzzle{
+    display: grid;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+    justify-items:stretch;
+    align-items: stretch;
+    justify-content: start;
+    grid-template-columns: 40px 40px 40px 40px;
+    grid-template-rows: 40px 40px 40px 40px;
+}
+.puzzle__piece{
+    cursor: grab;
+    background:#59cff5;
+    text-align: center;
+    line-height: 40px;
+    color: #fff;
+}
+
+.puzzle__piece:not(.puzzle__piece--blank){
+    box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.5);
+}
