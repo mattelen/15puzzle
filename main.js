@@ -38,6 +38,10 @@ function isSolvable(puzzleArray) {
     return numOfInversions % 2 === 0; // If numOfInversions is an even number, then this puzzle array is solvable
 }
 
+function createPuzzle(){
+
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
     let puzzleArray = [];
@@ -47,7 +51,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const elPuzzle = document.querySelector('.puzzle');
     puzzleArray.forEach(function (value) {
-        elPuzzle.insertAdjacentHTML('beforeend', '<div class="puzzle__piece">'+value+'</div>');
+        elPuzzle.insertAdjacentHTML('beforeend', '<div draggable="true" class="puzzle__piece">' + value + '</div>');
     });
     elPuzzle.insertAdjacentHTML('beforeend', '<div class="puzzle__piece puzzle__piece--blank"></div>');
+
+    let elPuzzlePieces = document.querySelectorAll('.puzzle__piece:not(.puzzle__piece--blank)');
+    const elBlankSpace = document.querySelector('.puzzle__piece--blank');
+
+
+    let sourceElement;
+
+    elPuzzlePieces.forEach((elPiece) => {
+        elPiece.addEventListener('dragstart', event => {
+            sourceElement = event.target;
+        });
+    });
+
+    elBlankSpace.addEventListener("drop", function (event) {
+        event.preventDefault();
+
+        //Todo double check this move is a legal move.
+        if (true) {
+            // We want to swap the two elements around in the dom
+            // Insert a temp element so we know where the dragged one was
+            sourceElement.insertAdjacentHTML("afterend", '<div class="puzzle__piece puzzle__piece--temp"></div>');
+            const elTemp = document.querySelector('.puzzle__piece--temp');
+            elPuzzle.insertBefore(sourceElement, elBlankSpace);
+            elPuzzle.insertBefore(elBlankSpace, elTemp);
+            elTemp.remove();
+            //Now we check if the puzzle is complete. First, refresh elPuzzlePieces
+            elPuzzlePieces = document.querySelectorAll('.puzzle__piece:not(.puzzle__piece--blank)');
+            let puzzleCheckCount = 1;
+            let puzzleComplete = true;
+            elPuzzlePieces.forEach((elPiece) => {
+                if (parseInt(elPiece.innerText) !== puzzleCheckCount) {
+                    puzzleComplete = false;
+                }
+                puzzleCheckCount++;
+            });
+            if (puzzleComplete && elPuzzle.lastChild.classList.contains('.puzzle__piece--blank')) { // Make sure the blank piece is at the end
+                document.body.classList.add('puzzle-complete');
+            }
+
+        }
+
+    }, false);
 });
+
+document.addEventListener("dragover", function (event) {
+    // prevent default to allow the drop event listener to fire
+    event.preventDefault();
+}, false);

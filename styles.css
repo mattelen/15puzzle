@@ -13,7 +13,6 @@ html{
     grid-template-rows: 40px 40px 40px 40px;
 }
 .puzzle__piece{
-    cursor: grab;
     background:#59cff5;
     text-align: center;
     line-height: 40px;
@@ -22,4 +21,5 @@ html{
 
 .puzzle__piece:not(.puzzle__piece--blank){
     box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.5);
+    cursor: grab;
 }
