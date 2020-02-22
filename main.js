@@ -39,17 +39,18 @@ function isSolvable(puzzleArray) {
 }
 
 function createPuzzle(){
+    document.body.classList.remove('puzzle-complete');
 
-}
-
-
-document.addEventListener("DOMContentLoaded", () => {
     let puzzleArray = [];
     do {
         puzzleArray = shuffleArray([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
     } while (!isSolvable(puzzleArray));
 
     const elPuzzle = document.querySelector('.puzzle');
+
+    // Flush elPuzzle first
+    elPuzzle.innerHTML = '';
+
     puzzleArray.forEach(function (value) {
         elPuzzle.insertAdjacentHTML('beforeend', '<div draggable="true" class="puzzle__piece">' + value + '</div>');
     });
@@ -57,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let elPuzzlePieces = document.querySelectorAll('.puzzle__piece:not(.puzzle__piece--blank)');
     const elBlankSpace = document.querySelector('.puzzle__piece--blank');
-
 
     let sourceElement;
 
@@ -89,16 +89,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 puzzleCheckCount++;
             });
-            if (puzzleComplete && elPuzzle.lastChild.classList.contains('.puzzle__piece--blank')) { // Make sure the blank piece is at the end
+            if (puzzleComplete && elPuzzle.lastChild.classList.contains('puzzle__piece--blank')) { // Make sure the blank piece is at the end
                 document.body.classList.add('puzzle-complete');
             }
 
         }
 
     }, false);
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    createPuzzle();
+    document.querySelector('.puzzle-complete__play-again').addEventListener('click', () => {
+        createPuzzle();
+    });
 });
 
 document.addEventListener("dragover", function (event) {
     // prevent default to allow the drop event listener to fire
     event.preventDefault();
 }, false);
+
