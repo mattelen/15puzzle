@@ -1,3 +1,4 @@
+
 /**
  * Shuffles a 1D array. Source from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
  * @param array Array to be shuffled
@@ -62,39 +63,27 @@ function createPuzzle(){
     let sourceElement;
 
     elPuzzlePieces.forEach((elPiece) => {
-        elPiece.addEventListener('dragstart', event => {
-            sourceElement = event.target;
-        });
+        if('ontouchstart' in window){ // If a mobile device, we want the user to long press the tile they want to move, rather than drag it like on desktop
+            elPiece.addEventListener('mouseup', event => {
+                moveTile(event.target);
+                // TODO what would be a nice UI effect is having a dragging animation occur here
+            });
+        }else{
+            elPiece.addEventListener('dragstart', event => {
+                sourceElement = event.target;
+            });
+        }
+
+
     });
+    // if('ondrop' in elPuzzle){
+    //     alert("NO DRAGGING!!!");
+    // }
+    //
 
     elBlankSpace.addEventListener("drop", function (event) {
         event.preventDefault();
-
-        //Todo double check this move is a legal move.
-        if (true) {
-            // We want to swap the two elements around in the dom
-            // Insert a temp element so we know where the dragged one was
-            sourceElement.insertAdjacentHTML("afterend", '<div class="puzzle__piece puzzle__piece--temp"></div>');
-            const elTemp = document.querySelector('.puzzle__piece--temp');
-            elPuzzle.insertBefore(sourceElement, elBlankSpace);
-            elPuzzle.insertBefore(elBlankSpace, elTemp);
-            elTemp.remove();
-            //Now we check if the puzzle is complete. First, refresh elPuzzlePieces
-            elPuzzlePieces = document.querySelectorAll('.puzzle__piece:not(.puzzle__piece--blank)');
-            let puzzleCheckCount = 1;
-            let puzzleComplete = true;
-            elPuzzlePieces.forEach((elPiece) => {
-                if (parseInt(elPiece.innerText) !== puzzleCheckCount) {
-                    puzzleComplete = false;
-                }
-                puzzleCheckCount++;
-            });
-            if (puzzleComplete && elPuzzle.lastChild.classList.contains('puzzle__piece--blank')) { // Make sure the blank piece is at the end
-                document.body.classList.add('puzzle-complete');
-            }
-
-        }
-
+        moveTile(sourceElement);
     }, false);
 }
 
@@ -111,3 +100,41 @@ document.addEventListener("dragover", function (event) {
     event.preventDefault();
 }, false);
 
+function moveTile(sourceElement){
+    const elBlankSpace = document.querySelector('.puzzle__piece--blank');
+    const elPuzzle = document.querySelector('.puzzle');
+
+    //Todo double check this move is a legal move.
+    let isLegalMove = false;
+
+    if(elBlankSpace.nextSibling === sourceElement){
+        isLegalMove = true;
+    }
+
+    console.log(isLegalMove);
+
+
+    if (isLegalMove) {
+        // We want to swap the two elements around in the dom
+        // Insert a temp element so we know where the dragged one was
+        sourceElement.insertAdjacentHTML("afterend", '<div class="puzzle__piece puzzle__piece--temp"></div>');
+        const elTemp = document.querySelector('.puzzle__piece--temp');
+        elPuzzle.insertBefore(sourceElement, elBlankSpace);
+        elPuzzle.insertBefore(elBlankSpace, elTemp);
+        elTemp.remove();
+        //Now we check if the puzzle is complete. First, refresh elPuzzlePieces
+        const elPuzzlePieces = document.querySelectorAll('.puzzle__piece:not(.puzzle__piece--blank)');
+        let puzzleCheckCount = 1;
+        let puzzleComplete = true;
+        elPuzzlePieces.forEach((elPiece) => {
+            if (parseInt(elPiece.innerText) !== puzzleCheckCount) {
+                puzzleComplete = false;
+            }
+            puzzleCheckCount++;
+        });
+        if (puzzleComplete && elPuzzle.lastChild.classList.contains('puzzle__piece--blank')) { // Make sure the blank piece is at the end
+            document.body.classList.add('puzzle-complete');
+        }
+
+    }
+}
